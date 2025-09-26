@@ -11,3 +11,5 @@ docker run -d \
   cerulean-v4
 
 Check if the container is running: docker ps
+
+TODO change trash icon
