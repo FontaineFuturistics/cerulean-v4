@@ -1,0 +1,14 @@
+# Ignore runtime data
+/data/
+*.db
+
+# Ignore swap, logs, caches
+*.log
+*.cache
+
+# macOS Finder meta
+.DS_Store
+
+# IDE/editor directories
+.vscode/
+.idea/
