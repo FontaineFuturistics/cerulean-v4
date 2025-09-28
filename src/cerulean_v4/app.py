@@ -26,10 +26,10 @@ def levenshtein(a, b):
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        if 'signup' in request.form: # TODO: for some reason you need to provide a username to even be redirected to signup, fix that
+        if 'signup' in request.form:
             return redirect(url_for('signup'))
-        username = request.form['username']
-        password = request.form['password']
+        username = request.form.get('username')
+        password = request.form.get('password')
         user = validate_user(username, password)
         if user:
             session['username'] = username
