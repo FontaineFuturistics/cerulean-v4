@@ -18,3 +18,7 @@
 __pycache__/
 *.pyc
 *.pyo
+
+# Ignore poetry stuff
+dist/
+*.egg-info/
