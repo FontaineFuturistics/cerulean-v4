@@ -1,20 +1,36 @@
 {% extends "welcome.html" %}
 {% block content %}
 <h2>Your URN → URL Mappings</h2>
-<form method="post">
-    <input type="text" name="urn" placeholder="URN" required>
-    <input type="text" name="url" placeholder="URL" required>
-    <button type="submit" name="action" value="add">Add/Update Mapping</button>
-</form>
-<ul>
-    {% for urn, url in mappings.items() %}
-    <li>
-        <strong>{{ urn }}</strong>: <a href="{{ url }}" target="_blank">{{ url }}</a>
-        <form method="post" style="display:inline">
-            <input type="hidden" name="urn" value="{{ urn }}">
-            <button type="submit" name="action" value="remove">Remove</button>
-        </form>
-    </li>
-    {% endfor %}
-</ul>
+<table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+        <tr>
+            <th>URN</th>
+            <th>URL</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Add new mapping row -->
+        <tr>
+            <form method="post">
+                <td><input type="text" name="urn" placeholder="URN" required></td>
+                <td><input type="text" name="url" placeholder="URL" required></td>
+                <td><button type="submit" name="action" value="add">Add/Update</button></td>
+            </form>
+        </tr>
+        <!-- Existing mappings -->
+        {% for urn, url in mappings.items() %}
+        <tr>
+            <td>{{ urn }}</td>
+            <td><a href="{{ url }}" target="_blank">{{ url }}</a></td>
+            <td>
+                <form method="post" style="display:inline">
+                    <input type="hidden" name="urn" value="{{ urn }}">
+                    <button type="submit" name="action" value="remove">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

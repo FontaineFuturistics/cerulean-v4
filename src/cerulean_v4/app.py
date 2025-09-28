@@ -26,14 +26,14 @@ def levenshtein(a, b):
 @app.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        if 'signup' in request.form:
+        if 'signup' in request.form: # TODO: for some reason you need to provide a username to even be redirected to signup, fix that
             return redirect(url_for('signup'))
         username = request.form['username']
         password = request.form['password']
         user = validate_user(username, password)
         if user:
             session['username'] = username
-            return redirect(url_for('welcome'))
+            return redirect(url_for('mappings'))
         else:
             return render_template('login.html', error='Invalid credentials')
     return render_template('login.html')
@@ -43,6 +43,8 @@ def signup():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        if not username.isalnum():
+            return render_template('signup.html', error='Usernames may not contains special characters')
         if create_user(username, password):
             return redirect(url_for('login'))
         else:
@@ -69,8 +71,9 @@ def mappings():
         elif action == 'remove' and urn:
             remove_mapping(username, urn)
     mappings = get_mappings(username)
-    return render_template('mappings.html', mappings=mappings)
+    return render_template('mappings.html', username=session['username'], mappings=mappings)
 
+# Syntax: /search?u=<username>&q=<query>
 @app.route('/search')
 def search():
     username = request.args.get('u')
@@ -82,41 +85,6 @@ def search():
         return "No mappings found for user", 404
     closest_urn = min(mappings.keys(), key=lambda urn: levenshtein(urn, query))
     return redirect(mappings[closest_urn])
-
-app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'change_this_secret') # TODO make this a real key later
-
-@app.route('/', methods=['GET', 'POST'])
-def login():
-    if request.method == 'POST':
-        if 'signup' in request.form:
-            return redirect(url_for('signup'))
-        username = request.form['username']
-        password = request.form['password']
-        user = validate_user(username, password)
-        if user:
-            session['username'] = username
-            return redirect(url_for('welcome'))
-        else:
-            return render_template('login.html', error='Invalid credentials')
-    return render_template('login.html')
-
-@app.route('/signup', methods=['GET', 'POST'])
-def signup():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        if create_user(username, password):
-            return redirect(url_for('login'))
-        else:
-            return render_template('signup.html', error='Username already exists')
-    return render_template('signup.html')
-
-@app.route('/welcome')
-def welcome():
-    if 'username' not in session:
-        return redirect(url_for('login'))
-    return render_template('welcome.html', username=session['username'])
 
 def main():
     app.run(host='0.0.0.0', port=8080) # Change to 443 for HTTPS when I implement that
