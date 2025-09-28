@@ -17,6 +17,7 @@ def create_user(username, password):
     db = get_db()
     cursor = db.cursor()
     cursor.execute('CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY, password TEXT)')
+    cursor.execute('CREATE TABLE IF NOT EXISTS mappings (username TEXT, urn TEXT, url TEXT, PRIMARY KEY (username, urn), FOREIGN KEY (username) REFERENCES users(username))')
     cursor.execute('SELECT username FROM users WHERE username=?', (username,))
     if cursor.fetchone():
         db.close()
@@ -26,6 +27,27 @@ def create_user(username, password):
     db.commit()
     db.close()
     return True
+def get_mappings(username):
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute('SELECT urn, url FROM mappings WHERE username=?', (username,))
+    mappings = cursor.fetchall()
+    db.close()
+    return dict(mappings)
+
+def add_mapping(username, urn, url):
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute('INSERT OR REPLACE INTO mappings (username, urn, url) VALUES (?, ?, ?)', (username, urn, url))
+    db.commit()
+    db.close()
+
+def remove_mapping(username, urn):
+    db = get_db()
+    cursor = db.cursor()
+    cursor.execute('DELETE FROM mappings WHERE username=? AND urn=?', (username, urn))
+    db.commit()
+    db.close()
 
 def validate_user(username, password):
     db = get_db()
