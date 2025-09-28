@@ -12,3 +12,9 @@
 # IDE/editor directories
 .vscode/
 .idea/
+
+# Ignore Python pycache directories and compiled files
+.venv/
+__pycache__/
+*.pyc
+*.pyo
