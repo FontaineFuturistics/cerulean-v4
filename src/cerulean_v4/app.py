@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from .db import get_db, create_user, validate_user
+from cerulean_v4.db import get_db, create_user, validate_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
@@ -38,5 +38,8 @@ def welcome():
         return redirect(url_for('login'))
     return render_template('welcome.html', username=session['username'])
 
+def main():
+    app.run(host='0.0.0.0', port=8080) # Change to 443 for HTTPS when I implement that
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    main()
